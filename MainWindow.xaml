@@ -1,0 +1,289 @@
+<Window x:Class="NodeMonitor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="NodeMonitor" Height="700" Width="1100"
+        WindowStartupLocation="CenterScreen">
+    
+    <Window.InputBindings>
+        <KeyBinding Key="F5" Command="{Binding BuildCommand}"/>
+        <KeyBinding Key="F6" Command="{Binding UploadCommand}"/>
+        <KeyBinding Key="F7" Command="{Binding BuildAllCommand}"/>
+        <KeyBinding Key="F8" Command="{Binding UploadAllCommand}"/>
+        <KeyBinding Key="Escape" Command="{Binding CancelCommand}"/>
+    </Window.InputBindings>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Toolbar -->
+        <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1" Padding="4">
+            <DockPanel>
+                <TextBlock Text="NodeMonitor" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" Margin="4,0"/>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                    <Button Content="Build (F5)" Command="{Binding BuildCommand}" Margin="2,0" ToolTip="Build selected board's project"/>
+                    <Button Content="Upload (F6)" Command="{Binding UploadCommand}" Margin="2,0" ToolTip="Upload to selected board"/>
+                    <Button Content="Build All (F7)" Command="{Binding BuildAllCommand}" Margin="2,0"/>
+                    <Button Content="Upload All (F8)" Command="{Binding UploadAllCommand}" Margin="2,0"/>
+                    <Button Content="Cancel" Command="{Binding CancelCommand}" Margin="2,0" IsEnabled="{Binding IsBusy}"/>
+                </StackPanel>
+                <TextBlock x:Name="StatusText" Text="{Binding StatusText}" VerticalAlignment="Center" Margin="20,0" Foreground="{StaticResource AccentBrush}"/>
+            </DockPanel>
+        </Border>
+        
+        <!-- Main Content -->
+        <TabControl Grid.Row="1" Margin="4">
+            <!-- Serial Tab -->
+            <TabItem Header="Serial">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="150"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Monitor 1 -->
+                    <Border Grid.Row="0" Grid.Column="0" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="2">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Border Background="{StaticResource SurfaceBrush}" Padding="4">
+                                <DockPanel>
+                                    <TextBlock x:Name="Monitor1Label" Text="[1] --" Width="120" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="Port1Combo" Width="70" ItemsSource="{Binding AvailablePorts}" SelectedItem="{Binding SelectedPort1}" Margin="4,0"/>
+                                    <ComboBox Width="70" ItemsSource="{Binding BaudRates}" SelectedItem="{Binding BaudRate1}" Margin="4,0"/>
+                                    <Button Content="{Binding Connect1Text}" Command="{Binding Connect1Command}" Width="70" Margin="4,0"/>
+                                    <Button Content="Clear" Click="ClearMonitor1_Click" Width="40" Margin="4,0"/>
+                                </DockPanel>
+                            </Border>
+                            <TextBox x:Name="Monitor1" Grid.Row="1" IsReadOnly="True" TextWrapping="Wrap" 
+                                     VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="11"
+                                     Background="#0D0D0D"/>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Monitor 2 -->
+                    <Border Grid.Row="0" Grid.Column="1" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="2">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Border Background="{StaticResource SurfaceBrush}" Padding="4">
+                                <DockPanel>
+                                    <TextBlock x:Name="Monitor2Label" Text="[2] --" Width="120" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="Port2Combo" Width="70" ItemsSource="{Binding AvailablePorts}" SelectedItem="{Binding SelectedPort2}" Margin="4,0"/>
+                                    <ComboBox Width="70" ItemsSource="{Binding BaudRates}" SelectedItem="{Binding BaudRate2}" Margin="4,0"/>
+                                    <Button Content="{Binding Connect2Text}" Command="{Binding Connect2Command}" Width="70" Margin="4,0"/>
+                                    <Button Content="Clear" Click="ClearMonitor2_Click" Width="40" Margin="4,0"/>
+                                </DockPanel>
+                            </Border>
+                            <TextBox x:Name="Monitor2" Grid.Row="1" IsReadOnly="True" TextWrapping="Wrap" 
+                                     VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="11"
+                                     Background="#0D0D0D"/>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Monitor 3 -->
+                    <Border Grid.Row="1" Grid.Column="0" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="2">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Border Background="{StaticResource SurfaceBrush}" Padding="4">
+                                <DockPanel>
+                                    <TextBlock x:Name="Monitor3Label" Text="[3] --" Width="120" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="Port3Combo" Width="70" ItemsSource="{Binding AvailablePorts}" SelectedItem="{Binding SelectedPort3}" Margin="4,0"/>
+                                    <ComboBox Width="70" ItemsSource="{Binding BaudRates}" SelectedItem="{Binding BaudRate3}" Margin="4,0"/>
+                                    <Button Content="{Binding Connect3Text}" Command="{Binding Connect3Command}" Width="70" Margin="4,0"/>
+                                    <Button Content="Clear" Click="ClearMonitor3_Click" Width="40" Margin="4,0"/>
+                                </DockPanel>
+                            </Border>
+                            <TextBox x:Name="Monitor3" Grid.Row="1" IsReadOnly="True" TextWrapping="Wrap" 
+                                     VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="11"
+                                     Background="#0D0D0D"/>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Monitor 4 -->
+                    <Border Grid.Row="1" Grid.Column="1" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="2">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Border Background="{StaticResource SurfaceBrush}" Padding="4">
+                                <DockPanel>
+                                    <TextBlock x:Name="Monitor4Label" Text="[4] --" Width="120" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="Port4Combo" Width="70" ItemsSource="{Binding AvailablePorts}" SelectedItem="{Binding SelectedPort4}" Margin="4,0"/>
+                                    <ComboBox Width="70" ItemsSource="{Binding BaudRates}" SelectedItem="{Binding BaudRate4}" Margin="4,0"/>
+                                    <Button Content="{Binding Connect4Text}" Command="{Binding Connect4Command}" Width="70" Margin="4,0"/>
+                                    <Button Content="Clear" Click="ClearMonitor4_Click" Width="40" Margin="4,0"/>
+                                </DockPanel>
+                            </Border>
+                            <TextBox x:Name="Monitor4" Grid.Row="1" IsReadOnly="True" TextWrapping="Wrap" 
+                                     VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="11"
+                                     Background="#0D0D0D"/>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Build Output -->
+                    <Border Grid.Row="2" Grid.ColumnSpan="2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="2">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Border Background="{StaticResource SurfaceBrush}" Padding="4">
+                                <DockPanel>
+                                    <TextBlock Text="Build Output" VerticalAlignment="Center"/>
+                                    <Button Content="Clear" Click="ClearBuildOutput_Click" Width="40" HorizontalAlignment="Right"/>
+                                </DockPanel>
+                            </Border>
+                            <TextBox x:Name="BuildOutput" Grid.Row="1" IsReadOnly="True" TextWrapping="Wrap" 
+                                     VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="10"
+                                     Background="#0D0D0D" Foreground="#808080"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+            
+            <!-- Boards Tab -->
+            <TabItem Header="Boards">
+                <Grid Margin="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Board List -->
+                    <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Border Background="{StaticResource SurfaceBrush}" Padding="4">
+                                <TextBlock Text="Configured Boards"/>
+                            </Border>
+                            <ListBox x:Name="BoardList" Grid.Row="1" ItemsSource="{Binding Boards}" SelectedItem="{Binding SelectedBoard}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Id}" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding BoardType}" FontSize="10" Foreground="#808080"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="4">
+                                <Button Content="Add" Command="{Binding AddBoardCommand}" Width="50" Margin="2"/>
+                                <Button Content="Remove" Command="{Binding RemoveBoardCommand}" Width="60" Margin="2"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Board Details -->
+                    <Border Grid.Column="1" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="8,0,0,0">
+                        <Grid Margin="8" DataContext="{Binding SelectedBoard}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <Label Content="ID:" Grid.Row="0"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}" Margin="0,2"/>
+                            
+                            <Label Content="Board Type:" Grid.Row="1"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding BoardType, UpdateSourceTrigger=PropertyChanged}" Margin="0,2"/>
+                            
+                            <Label Content="Port:" Grid.Row="2"/>
+                            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding DataContext.AvailablePorts, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                      SelectedItem="{Binding Port}" Margin="0,2"/>
+                            
+                            <Label Content="Baud Rate:" Grid.Row="3"/>
+                            <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding DataContext.BaudRates, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                      SelectedItem="{Binding BaudRate}" Margin="0,2"/>
+                            
+                            <Label Content="Project Path:" Grid.Row="4"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ProjectPath, UpdateSourceTrigger=PropertyChanged}" Margin="0,2"/>
+                            <Button Grid.Row="4" Grid.Column="2" Content="..." Width="30" Margin="4,2" Click="BrowseProject_Click"/>
+                            
+                            <Label Content="Environment:" Grid.Row="5"/>
+                            <ComboBox x:Name="EnvCombo" Grid.Row="5" Grid.Column="1" SelectedItem="{Binding Environment}" Margin="0,2"/>
+                            
+                            <StackPanel Grid.Row="6" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="0,8">
+                                <Button Content="Save" Command="{Binding DataContext.SaveConfigCommand, RelativeSource={RelativeSource AncestorType=Window}}" Width="60" Margin="2"/>
+                                <Button Content="Refresh Environments" Click="RefreshEnv_Click" Width="120" Margin="2"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+            
+            <!-- Settings Tab -->
+            <TabItem Header="Settings">
+                <Grid Margin="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Label Content="PlatformIO Path:" Grid.Row="0"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PlatformIOPath}" Margin="0,2"/>
+                    <Button Grid.Row="0" Grid.Column="2" Content="..." Width="30" Margin="4,2" Click="BrowsePio_Click"/>
+                    
+                    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Margin="0,16,0,0" FontSize="11" Foreground="#808080">
+                        <Run Text="Keyboard Shortcuts:"/>
+                        <LineBreak/>
+                        <Run Text="F5 - Build selected board's project"/>
+                        <LineBreak/>
+                        <Run Text="F6 - Upload to selected board"/>
+                        <LineBreak/>
+                        <Run Text="F7 - Build all configured projects"/>
+                        <LineBreak/>
+                        <Run Text="F8 - Upload to all configured boards"/>
+                        <LineBreak/>
+                        <Run Text="Esc - Cancel current operation"/>
+                    </TextBlock>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="4">
+            <DockPanel>
+                <TextBlock Text="{Binding PioStatus}" DockPanel.Dock="Right" Margin="8,0"/>
+                <TextBlock Text="{Binding ConnectionStatus}"/>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>
