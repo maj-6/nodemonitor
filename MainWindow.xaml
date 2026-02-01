@@ -30,7 +30,7 @@
                     <Button Content="Upload All (F8)" Command="{Binding UploadAllCommand}" Margin="2,0"/>
                     <Button Content="Cancel" Command="{Binding CancelCommand}" Margin="2,0" IsEnabled="{Binding IsBusy}"/>
                 </StackPanel>
-                <TextBlock x:Name="StatusText" Text="{Binding StatusText}" VerticalAlignment="Center" Margin="20,0" Foreground="{StaticResource AccentBrush}"/>
+<TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" Margin="20,0" Foreground="{StaticResource AccentBrush}"/>
             </DockPanel>
         </Border>
         
